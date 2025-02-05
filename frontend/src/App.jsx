@@ -1,12 +1,21 @@
-import axios from 'axios';
+import axios from './utils/axios';
 import React from 'react';
 
 function App() {
   const [loginText, setLoginText] = React.useState('');
   const [passwordText, setPasswordText] = React.useState('');
 
-  const handleClickLogin = () => {
-    console.log('Clicked login');
+  const handleClickLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post('/login', {
+        username: loginText,
+        password: passwordText,
+      });
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -14,7 +23,7 @@ function App() {
       <div className="container">
         <div className="window">
           <h2>Авторизация</h2>
-          <form>
+          <form onSubmit={handleClickLogin}>
             <div className="window__row">
               <label htmlFor="login">Логин:</label>
               <input
@@ -37,7 +46,7 @@ function App() {
                 }}
               />
             </div>
-            <button onClick={handleClickLogin}>Войти</button>
+            <button>Войти</button>
           </form>
         </div>
       </div>
