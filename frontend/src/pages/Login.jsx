@@ -8,6 +8,7 @@ const Login = () => {
 
   const handleClickLogin = async (e) => {
     e.preventDefault();
+    console.log(123);
     try {
       const res = await axios.post('/login', {
         username: loginText,
