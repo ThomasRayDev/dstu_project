@@ -8,4 +8,3 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     role = Column(String, default="worker")  # worker, manager, admin
-    is_active = Column(Boolean, default=True)
