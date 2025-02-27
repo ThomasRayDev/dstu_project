@@ -9,11 +9,11 @@ const Login = () => {
   const handleClickLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/login', {
+      const res = await axios.post('/auth/login', {
         username: loginText,
         password: passwordText,
       });
-      console.log(res);
+      localStorage.setItem('access_token', res.data.access_token);
     } catch (error) {
       console.log(error);
     }
