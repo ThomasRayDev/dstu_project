@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Security
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from database import SessionLocal, get_db
 from models import Project
@@ -8,14 +7,12 @@ from dependencies import get_current_user
 
 
 router = APIRouter()
-security = HTTPBearer()
 
 
 @router.get("/projects")
-async def get_projects(credentials: HTTPAuthorizationCredentials = Security(security), db: Session = Depends(get_db)):
+async def get_projects(decoded_token = Depends(get_current_user), db: Session = Depends(get_db)):
     #пупупуппупу, щас я подумаю, че надо написать, озадачился я...
-    token = credentials.credentials
-    user = get_current_user(token)
+    user = decoded_token
     return { 
         "user": user,
         "projects": db.query(Project).all()
