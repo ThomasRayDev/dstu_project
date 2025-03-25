@@ -1,14 +1,42 @@
 import React from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from '../utils/axios';
 
 const Home = () => {
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [username, setUsername] = React.useState('');
+
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const res = await axios.get('/auth/current-user');
+        setUsername(res.data.username);
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+        navigate('/login');
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
   return (
     <div className="home">
       <div className="header">
         <h1>Сильвестр</h1>
-        <div className="profile">
-          <div className="profile__name">Игорь</div>
-          <a href="">Выйти</a>
-        </div>
+        {isLoading ? (
+          ''
+        ) : (
+          <div className="profile">
+            <div className="profile__name">{username}</div>
+            <Link to="/login" onClick={() => window.localStorage.removeItem('access_token')}>
+              Выйти
+            </Link>
+          </div>
+        )}
       </div>
 
       <h2>Проекты</h2>

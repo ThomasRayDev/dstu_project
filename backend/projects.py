@@ -15,7 +15,6 @@ security = HTTPBearer()
 async def get_projects(credentials: HTTPAuthorizationCredentials = Security(security), db: Session = Depends(get_db)):
     #пупупуппупу, щас я подумаю, че надо написать, озадачился я...
     token = credentials.credentials
-    print(token)
     user = get_current_user(token)
     return { 
         "user": user,

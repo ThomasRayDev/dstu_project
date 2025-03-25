@@ -1,19 +1,23 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import axios from '../utils/axios';
 
 const Login = () => {
-  const [loginText, setLoginText] = React.useState('');
-  const [passwordText, setPasswordText] = React.useState('');
+  const navigate = useNavigate();
+
+  const [login, setLogin] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
   const handleClickLogin = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post('/auth/login', {
-        username: loginText,
-        password: passwordText,
+        username: login,
+        password: password,
       });
       localStorage.setItem('access_token', res.data.access_token);
+      navigate('/');
     } catch (error) {
       console.log(error);
     }
@@ -29,9 +33,9 @@ const Login = () => {
             <input
               type="text"
               id="login"
-              value={loginText}
+              value={login}
               onChange={(e) => {
-                setLoginText(e.target.value);
+                setLogin(e.target.value);
               }}
             />
           </div>
@@ -40,9 +44,9 @@ const Login = () => {
             <input
               type="password"
               id="password"
-              value={passwordText}
+              value={password}
               onChange={(e) => {
-                setPasswordText(e.target.value);
+                setPassword(e.target.value);
               }}
             />
           </div>
