@@ -2,6 +2,18 @@
   margin-top: 30px;
 }
 
+.title {
+  display: flex;
+  align-items: center;
+
+  .button {
+    margin-left: 20px;
+    background-color: #f3eee8;
+    padding: 5px;
+    border-radius: 10px;
+  }
+}
+
 .statuses {
   display: flex;
   margin: 20px 0;

@@ -9,8 +9,6 @@ ALGORITHM = "HS256"
 # oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 security = HTTPBearer()
 
-print('Hello world')
-
 def get_current_user(credentials: HTTPAuthorizationCredentials = Security(security)):
     try:
         token = credentials.credentials
