@@ -1,41 +1,59 @@
-.header {
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  border-bottom: 1px solid #eee5e2;
-
-  &-right {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .buttons {
-    display: flex;
-    margin: 0 20px;
-
-    li {
-      margin: 0 5px;
-      padding: 10px;
-      background-color: #f3eee8;
-      border-radius: 10px;
-    }
-  }
+.wrapper {
+  margin-top: 30px;
 }
 
-.nav {
+.statuses {
   display: flex;
+  margin: 20px 0;
 
   li {
-    margin: 0 15px;
+    margin-right: 15px;
+    padding: 7px 15px;
+    background-color: #f3eee8;
+    border-radius: 15px;
   }
 }
 
-.avatar {
-  width: 40px;
-  height: 40px;
-  background-color: #d8c5b7;
-  border-radius: 50%;
+.status {
+  width: max-content;
+  padding: 7px 20px;
+  background-color: #f3eee8;
+  border-radius: 15px;
+}
+
+table {
+  border-collapse: collapse;
+  border: 1px solid #e9dfd5;
+  border-radius: 15px;
+  border-collapse: separate;
+  border-spacing: 0;
+  width: calc(100vw - 500px);
+  table-layout: fixed;
+}
+
+th,
+td {
+  padding: 8px 10px;
+  text-align: start;
+}
+
+td {
+  border-top: 1px solid #e9dfd5;
+}
+
+.project-column {
+  width: 30%;
+}
+
+.status-column {
+  width: 20%;
+}
+
+.date-column {
+  width: 15%;
+}
+
+.action-column {
+  width: 20%;
+  color: #9c7450;
 }

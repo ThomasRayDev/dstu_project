@@ -1,50 +1,95 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+
+import Header from '../components/Header';
+
 import axios from '../utils/axios';
 
 const Home = () => {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [username, setUsername] = React.useState('');
-
   const navigate = useNavigate();
 
-  // React.useEffect(() => {
-  //   const fetchCurrentUser = async () => {
-  //     try {
-  //       const res = await axios.get('/auth/current-user');
-  //       setUsername(res.data.username);
-  //       setIsLoading(false);
-  //     } catch (error) {
-  //       console.log(error);
-  //       navigate('/login');
-  //     }
-  //   };
+  React.useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const res = await axios.get('/auth/current-user');
+      } catch (error) {
+        console.log(error);
+        navigate('/login');
+      }
+    };
 
-  //   fetchCurrentUser();
-  // }, []);
+    fetchCurrentUser();
+  }, []);
 
   return (
-    <div className="header">
-      <div className="logo">
-        <h2>Сильвестр</h2>
+    <>
+      <Header />
+      <div className="container">
+        <div className="wrapper">
+          <h1>Все проекты</h1>
+          <ul className="statuses">
+            <li>Все</li>
+            <li>Активные</li>
+            <li>В процессе</li>
+            <li>Просроченные</li>
+          </ul>
+          <table>
+            <tr>
+              <th className="project-column">Проект</th>
+              <th className="status-column">Статус</th>
+              <th className="date-column">Начало</th>
+              <th className="date-column">Окончание</th>
+              <th className="action-column"></th>
+            </tr>
+            <tr>
+              <td className="project-column">Складское помещение</td>
+              <td className="status-column">
+                <div className="status">В процессе</div>
+              </td>
+              <td className="date-column">15.03.2022</td>
+              <td className="date-column">15.05.2022</td>
+              <td className="action-column">Обновить статус</td>
+            </tr>
+            <tr>
+              <td className="project-column">Складское помещение</td>
+              <td className="status-column">
+                <div className="status">В процессе</div>
+              </td>
+              <td className="date-column">15.03.2022</td>
+              <td className="date-column">15.05.2022</td>
+              <td className="action-column">Обновить статус</td>
+            </tr>
+            <tr>
+              <td className="project-column">Складское помещение</td>
+              <td className="status-column">
+                <div className="status">В процессе</div>
+              </td>
+              <td className="date-column">15.03.2022</td>
+              <td className="date-column">15.05.2022</td>
+              <td className="action-column">Обновить статус</td>
+            </tr>
+            <tr>
+              <td className="project-column">Складское помещение</td>
+              <td className="status-column">
+                <div className="status">В процессе</div>
+              </td>
+              <td className="date-column">15.03.2022</td>
+              <td className="date-column">15.05.2022</td>
+              <td className="action-column">Обновить статус</td>
+            </tr>
+            <tr>
+              <td className="project-column">Складское помещение</td>
+              <td className="status-column">
+                <div className="status">В процессе</div>
+              </td>
+              <td className="date-column">15.03.2022</td>
+              <td className="date-column">15.05.2022</td>
+              <td className="action-column">Обновить статус</td>
+            </tr>
+          </table>
+        </div>
       </div>
-      <div className="header-right">
-        <ul className="nav">
-          <li>Проекты</li>
-          <li>Задачи</li>
-          <li>Файлы</li>
-        </ul>
-        <ul className="buttons">
-          <li>
-            <span className="material-symbols-outlined">language</span>
-          </li>
-          <li>
-            <span className="material-symbols-outlined">notifications</span>
-          </li>
-        </ul>
-        <div className="avatar"></div>
-      </div>
-    </div>
+    </>
   );
 };
 

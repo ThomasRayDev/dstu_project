@@ -25,10 +25,10 @@ const Login = () => {
 
   return (
     <div className="container">
-      <div className="window">
+      <div className="login-window">
         <h2>Авторизация</h2>
         <form onSubmit={handleClickLogin}>
-          <div className="window__row">
+          <div className="login-window__row">
             <label htmlFor="login">Логин:</label>
             <input
               type="text"
@@ -39,7 +39,7 @@ const Login = () => {
               }}
             />
           </div>
-          <div className="window__row">
+          <div className="login-window__row">
             <label htmlFor="password">Пароль:</label>
             <input
               type="password"
