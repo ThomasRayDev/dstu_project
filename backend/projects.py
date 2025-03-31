@@ -20,10 +20,11 @@ async def get_projects(decoded_token = Depends(get_current_user), db: Session = 
      }
 
 @router.post("/")
-def create_project(project: ProjectSchema, db: Session = Depends(get_db)):
-    db_project = Project(name=project.name, description=project.description)
+def create_project(project: ProjectSchema, decoded_token = Depends(get_current_user), db: Session = Depends(get_db)):
+    db_project = Project(name=project.name, deadline=project.deadline, description=project.description, author=decoded_token['user_id'])
     db.add(db_project)
     db.commit()
     db.refresh(db_project)
+    
 
     return db_project

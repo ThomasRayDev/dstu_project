@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 class UserCreate(BaseModel):
     username: str
@@ -18,3 +19,4 @@ class UserResponse(BaseModel):
 class ProjectSchema(BaseModel):
     name: str
     description: str
+    deadline: datetime
