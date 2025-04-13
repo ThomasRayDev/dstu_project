@@ -20,7 +20,6 @@
 
 .project-container {
   display: flex;
-  justify-content: space-between;
   padding: 30px;
 
   img {
@@ -29,63 +28,75 @@
   }
 }
 
+// .left-content {
+//   width: 100%;
+// }
+
+.general-info {
+  border: 1px solid #e9dfd5;
+  border-radius: 20px;
+  width: min-content;
+  padding: 15px;
+}
+
 .right-content {
-  width: 50%;
+  width: 35%;
+  margin-left: 30px;
+  border: 1px solid #e9dfd5;
+  border-radius: 20px;
+  padding: 15px;
+  height: min-content;
 }
 
 .description {
-  width: 50%;
+  width: 100%;
   margin-top: 15px;
-}
-
-.task {
-  background-color: #e9dfd5;
-  padding: 15px;
-  border-radius: 15px;
-  margin-bottom: 10px;
 }
 
 .tasks {
   h2 {
-    margin-bottom: 5px;
+    margin-bottom: 15px;
   }
 }
 
-.task-status {
-  display: flex;
-  align-items: center;
-  margin-top: 5px;
+.task {
+  border: 1px solid #e9dfd5;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+
+  &-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    vertical-align: middle;
+  }
+
+  &-info {
+    display: flex;
+    justify-content: space-between;
+
+    span {
+      margin-right: 5px;
+    }
+  }
 
   .status {
-    margin-left: 10px;
+    margin-right: 10px;
   }
-}
 
-.task-actions {
-  margin-top: 15px;
-  display: flex;
-}
+  &-more {
+    padding: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
 
-.task-action {
-  display: flex;
-  align-items: center;
-  border-radius: 15px;
-  background-color: #d1ab85;
-  padding: 5px 15px;
-  margin: 0 5px;
-
-  span {
-    margin-right: 5px;
+    &:hover {
+      background-color: #e9dfd5;
+      cursor: pointer;
+    }
   }
-}
-
-.delete {
-  background-color: #fc6c64;
-  color: white;
-}
-
-.complete {
-  background-color: #99f4a4;
 }
 
 .create-new {
@@ -99,4 +110,9 @@
   &:hover {
     background-color: #e9dfd5;
   }
+}
+
+.delete {
+  background-color: #f47174;
+  color: white;
 }

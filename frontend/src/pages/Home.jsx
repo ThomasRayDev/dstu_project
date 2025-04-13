@@ -1,5 +1,9 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { fetchUser, selectUser } from '../redux/slices/userSlice';
+import { fetchProjects, selectProjects } from '../redux/slices/projectsSlice';
 
 import Header from '../components/Header';
 
@@ -7,11 +11,13 @@ import axios from '../utils/axios';
 
 const Home = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const [projects, setProjects] = React.useState([]);
-  const [userData, setUserData] = React.useState([]);
+  // const [projects, setProjects] = React.useState([]);
+  // const [_userData, setUserData] = React.useState({ role: 'admin' });
 
-  const isAdmin = userData.role == 'admin';
+  const { projects } = useSelector(selectProjects);
+  const { user } = useSelector(selectUser);
 
   const listProjects = projects.map((obj, i) => (
     <tr key={i}>
@@ -39,29 +45,39 @@ const Home = () => {
     </tr>
   ));
 
-  const fetchCurrentUser = async () => {
-    try {
-      const res = await axios.get('/auth/current-user');
-      setUserData(res.data);
-    } catch (error) {
-      console.log(error);
-      navigate('/login');
-    }
-  };
+  // const getCurrentUser = async () => {
+  //   try {
+  //     // const res = await axios.get('/auth/current-user');
+  //     // setUserData(res.data);
+  //     dispatch(fetchUser());
+  //   } catch (error) {
+  //     console.log(error);
+  //     navigate('/login');
+  //   }
+  // };
 
-  const fetchProjects = async () => {
-    try {
-      const res = await axios.get('/projects/');
-      setProjects(res.data.projects);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getProjects = async () => {
+  //   try {
+  //     // const res = await axios.get('/projects/');
+  //     // setProjects(res.data.projects);
+  //     dispatch(fetchProjects());
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   React.useEffect(() => {
-    fetchCurrentUser();
-    fetchProjects();
+    dispatch(fetchUser())
+      .unwrap()
+      .catch(() => navigate('/login'));
+    dispatch(fetchProjects());
   }, []);
+
+  // React.useEffect(() => {
+  //   if (user && !user.user_id) {
+  //     navigate('/login');
+  //   }
+  // }, [user]);
 
   return (
     <>
@@ -70,7 +86,7 @@ const Home = () => {
         <div className="wrapper">
           <div className="title">
             <h1>Все проекты</h1>
-            {isAdmin ? (
+            {user.role === 'admin' ? (
               <div className="button">
                 <span className="material-symbols-outlined">add</span>
               </div>
