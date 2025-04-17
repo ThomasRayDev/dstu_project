@@ -8,14 +8,32 @@ import Login from './pages/Login';
 import Home from './pages/Home';
 import Project from './pages/Project';
 
+import ProtectedRoute from './components/ProtectedRoute';
+import EditProject from './pages/EditProject';
+
 function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<Login />} />
-          <Route path="/dev" element={<Project />} />
+          <Route
+            path="/project/:project_id"
+            element={
+              <ProtectedRoute>
+                <Project />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/dev" element={<EditProject />} />
         </Routes>
       </BrowserRouter>
     </Provider>

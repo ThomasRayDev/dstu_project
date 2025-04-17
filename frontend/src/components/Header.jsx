@@ -1,10 +1,14 @@
 import React from 'react';
 
+import { useNavigate } from 'react-router-dom';
+
 const Header = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="header">
       <div className="logo">
-        <h2>Сильвестр</h2>
+        <h2 onClick={() => navigate('/')}>Сильвестр</h2>
       </div>
       <div className="header-right">
         <ul className="nav">

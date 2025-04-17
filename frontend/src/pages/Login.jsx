@@ -1,10 +1,15 @@
 import React from 'react';
+
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+
+import { fetchUser } from '../redux/slices/userSlice';
 
 import axios from '../utils/axios';
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [login, setLogin] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -17,6 +22,7 @@ const Login = () => {
         password: password,
       });
       localStorage.setItem('access_token', res.data.access_token);
+      dispatch(fetchUser());
       navigate('/');
     } catch (error) {
       console.log(error);

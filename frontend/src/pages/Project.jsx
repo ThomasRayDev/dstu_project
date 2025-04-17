@@ -1,25 +1,31 @@
 import React from 'react';
 
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+
+import { selectProjects } from '../redux/slices/projectsSlice';
+
 import Header from '../components/Header';
 
 const Project = () => {
+  const params = useParams();
+  const { projects } = useSelector(selectProjects);
+
+  const [projectData, setProjectData] = React.useState({});
+
+  React.useEffect(() => {
+    setProjectData(projects.filter((project) => project.id == params.project_id)[0]);
+  }, []);
+
   return (
     <>
       <Header />
       <div className="project-container">
         <div className="left-content">
           <div className="general-info">
-            <img src="img/example.jpg" alt="картинка" height="400" width="600" />
-            <h2>Детская площадка</h2>
-            <div className="description">
-              Проект строительства детской площадки предусматривает создание безопасного
-              и&nbsp;современного пространства для детей возрастом
-              от&nbsp;3&nbsp;до&nbsp;12&nbsp;лет. Площадка будет включать игровые элементы (качели,
-              горки, песочницу), зону отдыха с&nbsp;лавочками и&nbsp;озеленение. Общая площадь
-              составит 200&nbsp;м&sup2;, а&nbsp;материалы выбраны с&nbsp;учетом экологичности
-              и&nbsp;долговечности. Реализация проекта улучшит инфраструктуру района
-              и&nbsp;обеспечит детям место для активного отдыха.
-            </div>
+            <img src="../img/example.jpg" alt="картинка" height="400" width="600" />
+            <h2>{projectData.name}</h2>
+            <div className="description">{projectData.description}</div>
             <div className="project-actions">
               <div className="project-action">
                 <span className="material-symbols-outlined">edit</span>

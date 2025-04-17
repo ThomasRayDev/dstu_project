@@ -6,6 +6,10 @@
 
   border-bottom: 1px solid #e9dfd5;
 
+  .logo {
+    cursor: pointer;
+  }
+
   &-right {
     display: flex;
     justify-content: center;

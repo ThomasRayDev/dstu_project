@@ -1,26 +1,21 @@
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchUser, selectUser } from '../redux/slices/userSlice';
+import { selectUser } from '../redux/slices/userSlice';
 import { fetchProjects, selectProjects } from '../redux/slices/projectsSlice';
 
 import Header from '../components/Header';
-
-import axios from '../utils/axios';
 
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // const [projects, setProjects] = React.useState([]);
-  // const [_userData, setUserData] = React.useState({ role: 'admin' });
-
   const { projects } = useSelector(selectProjects);
   const { user } = useSelector(selectUser);
 
   const listProjects = projects.map((obj, i) => (
-    <tr key={i}>
+    <tr key={i} onClick={() => navigate(`/project/${obj.id}`)}>
       <td className="project-column">{obj.name}</td>
       <td className="status-column">
         <div className="status">В процессе</div>
@@ -45,39 +40,9 @@ const Home = () => {
     </tr>
   ));
 
-  // const getCurrentUser = async () => {
-  //   try {
-  //     // const res = await axios.get('/auth/current-user');
-  //     // setUserData(res.data);
-  //     dispatch(fetchUser());
-  //   } catch (error) {
-  //     console.log(error);
-  //     navigate('/login');
-  //   }
-  // };
-
-  // const getProjects = async () => {
-  //   try {
-  //     // const res = await axios.get('/projects/');
-  //     // setProjects(res.data.projects);
-  //     dispatch(fetchProjects());
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   React.useEffect(() => {
-    dispatch(fetchUser())
-      .unwrap()
-      .catch(() => navigate('/login'));
     dispatch(fetchProjects());
   }, []);
-
-  // React.useEffect(() => {
-  //   if (user && !user.user_id) {
-  //     navigate('/login');
-  //   }
-  // }, [user]);
 
   return (
     <>
