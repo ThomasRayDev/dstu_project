@@ -13,13 +13,21 @@ router = APIRouter()
 async def get_projects(
     decoded_token = Depends(get_current_user),
     db: Session = Depends(get_db)):
-    #пупупуппупу, щас я подумаю, че надо написать, озадачился я...
 
-    user = decoded_token
     db_project = db.query(Project).all()
     return { 
-        "user": user,
         "projects": db_project
+     }
+
+@router.get("/{project_id}")
+async def get_one_project(
+    project_id: int,
+    decoded_token = Depends(get_current_user),
+    db: Session = Depends(get_db)):
+
+    db_project = db.query(Project).filter(Project.id == project_id).first()
+    return { 
+        "project": db_project
      }
 
 @router.post("/")
@@ -28,7 +36,7 @@ def create_project(
     decoded_token = Depends(get_current_user),
     db: Session = Depends(get_db)):
 
-    db_project = Project(name=project.name, deadline=project.deadline, description=project.description, author=decoded_token['user_id'])
+    db_project = Project(name=project.name, deadline=project.deadline, created_on=project.created_on, description=project.description, author=decoded_token['user_id'])
     db.add(db_project)
     db.commit()
     db.refresh(db_project)
@@ -59,3 +67,22 @@ async def update_project(
     db.refresh(db_project)
     
     return db_project
+
+@router.delete("/{project_id}")
+async def delete_project(
+    project_id: int,
+    decoded_token = Depends(get_current_user),
+    db: Session = Depends(get_db)):
+    
+    db_project = db.query(Project).filter(Project.id == project_id).first()
+
+    if not db_project:
+        raise HTTPException(status_code=404, detail= "Project not found")
+    
+    if decoded_token['role'] == 'worker':
+        raise HTTPException(status_code=403, detail='Not authorized to delete this project')
+    
+    db.delete(db_project)
+    db.commit()
+
+    return {"detail": 'Project deleted'}

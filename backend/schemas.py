@@ -19,4 +19,11 @@ class UserResponse(BaseModel):
 class ProjectSchema(BaseModel):
     name: str
     description: str
+    created_on: datetime
+    deadline: datetime
+
+class TaskSchema(BaseModel):
+    name: str
+    description: str
+    created_on: datetime
     deadline: datetime

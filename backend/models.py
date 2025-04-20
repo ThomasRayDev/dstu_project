@@ -23,3 +23,18 @@ class Project(Base):
     #progress = Column(int)
     description = Column(String)
     author = Column(Integer, ForeignKey(User.id))
+
+    tasks = relationship("Task", back_populates="project")  # Добавлено
+    
+class Task(Base):
+    __tablename__ = "tasks"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True)
+    description = Column(String)
+    created_on = Column(Date, default = datetime.utcnow)
+    deadline = Column(Date)
+    status = Column(String, default="pending")
+    project_id = Column(Integer, ForeignKey("projects.id"))
+    
+    project = relationship("Project", back_populates="tasks")
