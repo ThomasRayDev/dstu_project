@@ -27,14 +27,14 @@ const Project = () => {
             <h2>{projectData.name}</h2>
             <div className="description">{projectData.description}</div>
             <div className="project-actions">
-              <div className="project-action">
+              <button>
                 <span className="material-symbols-outlined">edit</span>
                 Редактировать
-              </div>
-              <div className="project-action delete">
+              </button>
+              <button className="delete">
                 <span className="material-symbols-outlined">delete</span>
                 Удалить
-              </div>
+              </button>
             </div>
           </div>
         </div>

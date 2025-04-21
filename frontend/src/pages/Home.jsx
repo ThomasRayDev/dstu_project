@@ -52,7 +52,7 @@ const Home = () => {
           <div className="title">
             <h1>Все проекты</h1>
             {user.role === 'admin' ? (
-              <div className="button">
+              <div className="button" onClick={() => navigate('/edit/new')}>
                 <span className="material-symbols-outlined">add</span>
               </div>
             ) : (

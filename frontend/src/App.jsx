@@ -33,7 +33,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/dev" element={<EditProject />} />
+          <Route path="/edit/:project_id" element={<EditProject />} />
         </Routes>
       </BrowserRouter>
     </Provider>
