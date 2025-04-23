@@ -17,6 +17,7 @@ class UserResponse(BaseModel):
     is_active: bool
 
 class ProjectSchema(BaseModel):
+    img: str
     name: str
     description: str
     created_on: datetime

@@ -23,6 +23,7 @@ class Project(Base):
     #progress = Column(int)
     description = Column(String)
     author = Column(Integer, ForeignKey(User.id))
+    img = Column(String)
 
     tasks = relationship("Task", back_populates="project")  # Добавлено
     

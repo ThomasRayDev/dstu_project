@@ -6,6 +6,9 @@ from projects import router as projects_router
 
 app = FastAPI()
 
+from fastapi.staticfiles import StaticFiles
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 origins = [
     'http://localhost',
     'http://localhost:3000',
