@@ -23,6 +23,7 @@ textarea {
   padding: 5px;
   border-radius: 10px;
   border: 1px solid #aaaaaa;
+  resize: none;
 }
 
 button {
@@ -35,6 +36,7 @@ button {
   display: flex;
   align-items: center;
   margin-right: 15px;
+  cursor: pointer;
 
   span {
     margin-right: 5px;

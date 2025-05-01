@@ -40,8 +40,11 @@ table {
   border-radius: 15px;
   border-collapse: separate;
   border-spacing: 0;
-  width: calc(100vw - 500px);
   table-layout: fixed;
+}
+
+.projects-table {
+  width: calc(100vw - 500px);
 }
 
 th,

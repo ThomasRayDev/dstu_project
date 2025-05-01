@@ -65,7 +65,7 @@ const Home = () => {
             <li>В процессе</li>
             <li>Просроченные</li>
           </ul>
-          <table>
+          <table className="projects-table">
             <thead>
               <tr>
                 <th className="project-column">Проект</th>

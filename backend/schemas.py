@@ -22,9 +22,13 @@ class ProjectSchema(BaseModel):
     description: str
     created_on: datetime
     deadline: datetime
+    img: str
 
 class TaskSchema(BaseModel):
-    name: str
+    title: str
     description: str
     created_on: datetime
     deadline: datetime
+
+class CommentSchema(BaseModel):
+    text: str

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, Date, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
 from datetime import datetime, timezone
@@ -18,12 +18,12 @@ class Project(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    created_on = Column(Date, default = datetime.utcnow)
+    created_on = Column(Date, default = datetime.utcnow())
     deadline = Column(Date)
     #progress = Column(int)
     description = Column(String)
     author = Column(Integer, ForeignKey(User.id))
-    img = Column(String)
+    img = Column(String, default = '/uploads/example.jpg')
 
     tasks = relationship("Task", back_populates="project")  # Добавлено
     
@@ -33,9 +33,21 @@ class Task(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     description = Column(String)
-    created_on = Column(Date, default = datetime.utcnow)
+    created_on = Column(Date, default = datetime.utcnow())
     deadline = Column(Date)
     status = Column(String, default="pending")
     project_id = Column(Integer, ForeignKey("projects.id"))
     
     project = relationship("Project", back_populates="tasks")
+    comments = relationship('Comment', back_populates='task')
+
+class Comment(Base):
+    __tablename__ = 'comments'
+
+    id = Column(Integer, primary_key=True)
+    text = Column(String)
+    created_on = Column(DateTime, default = datetime.utcnow())
+    author = Column(Integer, ForeignKey(User.id))
+    task_id = Column(Integer, ForeignKey(Task.id))
+
+    task = relationship('Task', back_populates='comments')

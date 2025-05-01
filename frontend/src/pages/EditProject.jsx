@@ -10,26 +10,75 @@ const EditProject = () => {
   const navigate = useNavigate();
 
   const isNew = params.project_id == 'new' ? true : false;
+  const projectId = params.project_id;
 
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [startDate, setStartDate] = React.useState('');
   const [deadline, setDeadline] = React.useState('');
+  const [image, setImage] = React.useState('/uploads/example.jpg');
 
   const handleClickSave = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/projects/', {
-        name,
-        description,
-        deadline,
-      });
-      // navigate(`/project/${res.data.id}`);
-      navigate('/');
+      let res = {};
+      if (isNew) {
+        res = await axios.post('/projects/', {
+          name,
+          description,
+          deadline,
+          created_on: startDate,
+          img: image,
+        });
+      } else {
+        res = await axios.put(`/projects/${projectId}`, {
+          name,
+          description,
+          deadline,
+          created_on: startDate,
+          img: image,
+        });
+      }
+      navigate(`/project/${res.data.id}`);
     } catch (error) {
       console.log(error);
     }
   };
+
+  const handleChangeFile = async (e) => {
+    try {
+      if (!e.target.files[0]) return;
+      const formData = new FormData();
+      const file = e.target.files[0];
+      formData.append('file', file);
+      const { data } = await axios.post(`/projects/${projectId}/upload_image`, formData);
+      setImage(data.image_path);
+    } catch (error) {
+      console.warn(error);
+      alert('Ошибка при загрузке файла');
+    }
+  };
+
+  React.useEffect(() => {
+    const getProjectData = async () => {
+      try {
+        const res = await axios.get(`/projects/${projectId}`);
+        setName(res.data.project.name);
+        setDescription(res.data.project.description);
+        setStartDate(res.data.project.created_on);
+        setDeadline(res.data.project.deadline);
+        setImage(res.data.project.img);
+      } catch (error) {
+        console.log(error);
+        alert('Произошла ошибка');
+        navigate('/');
+      }
+    };
+
+    if (!isNew) {
+      getProjectData();
+    }
+  }, []);
 
   return (
     <>
@@ -52,8 +101,13 @@ const EditProject = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}></textarea>
             <label htmlFor="project_image">Изображение проекта:</label>
-            <img src="/img/example.jpg" alt="Превью" />
-            <input type="file" id="project_image" style={{ border: 'none' }} />
+            <img src={`http://localhost:8000${image}`} alt="Превью" />
+            <input
+              type="file"
+              id="project_image"
+              style={{ border: 'none' }}
+              onChange={handleChangeFile}
+            />
             <label htmlFor="project_start">Дата начала:</label>
             <input
               type="date"

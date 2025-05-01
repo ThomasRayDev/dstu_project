@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File,
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from database import SessionLocal, get_db
-from models import Project, Task
-from schemas import ProjectSchema
+from models import Project, Task, Comment
+from schemas import ProjectSchema, TaskSchema, CommentSchema
 from dependencies import get_current_user
 import os
 import uuid
@@ -44,7 +44,12 @@ def create_project(
     decoded_token = Depends(get_current_user),
     db: Session = Depends(get_db)):
 
-    db_project = Project(img= project.img, name=project.name, deadline=project.deadline, created_on=project.created_on, description=project.description, author=decoded_token['user_id'])
+    db_project = Project(img=project.img, 
+                         name=project.name, 
+                         deadline=project.deadline, 
+                         created_on=project.created_on, 
+                         description=project.description, 
+                         author=decoded_token['user_id'])
     db.add(db_project)
     db.commit()
     db.refresh(db_project)
@@ -70,6 +75,7 @@ async def update_project(
     db_project.name = project.name
     db_project.deadline = project.deadline
     db_project.description = project.description
+    db_project.img = project.img
     
     db.commit()
     db.refresh(db_project)
@@ -119,9 +125,203 @@ async def upload_project_image(
         content = await file.read()
         buffer.write(content)
     
-    # Обновление пути к картинке в проекте
-    db_project.image_path = f"/uploads/{file_name}"
-    db.commit()
-    db.refresh(db_project)
+    # # Обновление пути к картинке в проекте
+    # db_project.image_path = f"/uploads/{file_name}"
+    # db.commit()
+    # db.refresh(db_project)
     
-    return {"image_path": db_project.image_path}
+    return {"image_path": f'/uploads/{file_name}'}
+
+@router.post('/{project_id}/tasks')
+def create_task(
+    task: TaskSchema,
+    project_id: int,
+    decoded_token = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    db_project = db.query(Project).filter(Project.id == project_id).first()
+    if not db_project:
+        raise HTTPException(stats_code=404, detail='Project not found')
+    
+    db_task = Task(title=task.title,
+                   description=task.description,
+                   created_on=task.created_on,
+                   deadline=task.deadline,
+                   project_id=project_id)
+    db.add(db_task)
+    db.commit()
+    db.refresh(db_task)
+
+    return { 'task': db_task }
+
+@router.get('/{project_id}/tasks')
+def get_tasks(
+    project_id: int,
+    decoded_token = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    db_project = db.query(Project).filter(Project.id == project_id).first()
+    if not db_project:
+        raise HTTPException(status_code=404, detail='Project not found')
+    return { 'tasks': db_project.tasks }
+
+@router.get('/{project_id}/tasks/{task_id}')
+def get_one_task(
+    project_id: int,
+    task_id: int,
+    decoded_token = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    db_project = db.query(Project).filter(Project.id == project_id).first()
+    if not db_project:
+        raise HTTPException(status_code=404, detail='Project not found')
+    
+    db_task = db.query(Task).filter(Task.id == task_id).first()
+    if not db_task or not db_task in db_project.tasks:
+        raise HTTPException(status_code=404, detail='Task not found')
+    
+    return { 'task': db_task }
+
+@router.put('/{project_id}/tasks/{task_id}')
+def update_task(
+    task: TaskSchema,
+    project_id: int,
+    task_id: int,
+    decoded_token = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    db_project = db.query(Project).filter(Project.id == project_id).first()
+    if not db_project:
+        raise HTTPException(status_code=404, detail='Project not found')
+    
+    db_task = db.query(Task).filter(Task.id == task_id).first()
+    if not db_task or not db_task in db_project.tasks:
+        raise HTTPException(status_code=404, detail='Task not found')
+    
+    db_task.title = task.title
+    db_task.description = task.description
+    db_task.created_on = task.created_on
+    db_task.deadline = task.deadline
+
+    db.commit()
+    db.refresh(db_task)
+
+    return { 'task': db_task }
+
+@router.delete('/{project_id}/tasks/{task_id}')
+def delete_task(
+    project_id: int,
+    task_id: int,
+    decoded_token = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    db_project = db.query(Project).filter(Project.id == project_id).first()
+    if not db_project:
+        raise HTTPException(status_code=404, detail='Project not found')
+    
+    db_task = db.query(Task).filter(Task.id == task_id).first()
+    if not db_task or not db_task in db_project.tasks:
+        raise HTTPException(status_code=404, detail='Task not found')
+    
+    db.delete(db_task)
+    db.commit()
+
+    return { 'detail': 'Task deleted' }
+
+@router.post('/{project_id}/tasks/{task_id}/comments')
+def create_comment(
+    comment: CommentSchema,
+    project_id: int,
+    task_id: int,
+    decoded_token = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    db_task = db.query(Task).filter(Task.id == task_id, Task.project_id == project_id).first()
+    if not db_task:
+        raise HTTPException(status_code=404, detail='Task not found')
+    
+    db_comment = Comment(text=comment.text,
+                         created_on = datetime.utcnow(),
+                         author=decoded_token['user_id'],
+                         task_id=task_id)
+    db.add(db_comment)
+    db.commit()
+    db.refresh(db_comment)
+
+    return { 'comment': db_comment }
+
+@router.get('/{project_id}/tasks/{task_id}/comments')
+def get_comments(
+    project_id: int,
+    task_id: int,
+    decoded_token = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    db_task = db.query(Task).filter(Task.id == task_id, Task.project_id == project_id).first()
+    if not db_task:
+        raise HTTPException(status_code=404, detail='Task not found')
+    
+    return { 'comments': db_task.comments }
+
+@router.get('/{project_id}/tasks/{task_id}/comments/{comment_id}')
+def get_one_comment(
+    project_id: int,
+    task_id: int,
+    comment_id: int,
+    decoded_token = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    db_task = db.query(Task).filter(Task.id == task_id, Task.project_id == project_id).first()
+    if not db_task:
+        raise HTTPException(status_code=404, detail='Task not found')
+    
+    db_comment = db.query(Comment).filter(Comment.id == comment_id, Comment.task_id == task_id).first()
+    if not db_comment:
+        raise HTTPException(status_code=404, detail='Comment not found')
+    
+    return { 'comment': db_comment }
+
+@router.put('/{project_id}/tasks/{task_id}/comments/{comment_id}')
+def update_comment(
+    comment: CommentSchema,
+    project_id: int,
+    task_id: int,
+    comment_id: int,
+    decoded_token = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    db_task = db.query(Task).filter(Task.id == task_id, Task.project_id == project_id).first()
+    if not db_task:
+        raise HTTPException(status_code=404, detail='Task not found')
+    
+    db_comment = db.query(Comment).filter(Comment.id == comment_id, Comment.task_id == task_id).first()
+    if not db_comment:
+        raise HTTPException(status_code=404, detail='Comment not found')
+    
+    db_comment.text = comment.text
+
+    db.commit()
+    db.refresh(db_comment)
+
+    return { 'comment': db_comment }
+
+@router.delete('/{project_id}/tasks/{task_id}/comments/{comment_id}')
+def delete_comment(
+    project_id: int,
+    task_id: int,
+    comment_id: int,
+    decoded_token = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    db_task = db.query(Task).filter(Task.id == task_id, Task.project_id == project_id).first()
+    if not db_task:
+        raise HTTPException(status_code=404, detail='Task not found')
+    
+    db_comment = db.query(Comment).filter(Comment.id == comment_id, Comment.task_id == task_id).first()
+    if not db_comment:
+        raise HTTPException(status_code=404, detail='Comment not found')
+    
+    db.delete(db_comment)
+    db.commit()
+
+    return { 'detail': 'Comment deleted' }
