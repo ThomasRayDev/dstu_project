@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List, Optional
 from datetime import datetime
 
 class UserCreate(BaseModel):
@@ -27,8 +28,38 @@ class ProjectSchema(BaseModel):
 class TaskSchema(BaseModel):
     title: str
     description: str
-    created_on: datetime
+    created_on: Optional[datetime] = None
     deadline: datetime
 
 class CommentSchema(BaseModel):
     text: str
+
+
+class UserShort(BaseModel):
+    id: int
+    username: str
+
+    class Config:
+        orm_mode = True
+
+class CommentOut(BaseModel):
+    id: int
+    text: str
+    created_on: datetime
+    user: UserShort
+
+    class Config:
+        orm_mode = True
+
+class TaskOut(BaseModel):
+    id: int
+    title: str
+    description: str
+    created_on: datetime
+    deadline: datetime
+    status: str
+    project_id: int
+    comments: List[CommentOut]
+
+    class Config:
+        orm_mode = True

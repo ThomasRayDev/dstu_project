@@ -12,6 +12,17 @@ body {
   background-color: #fbfaf8;
 }
 
+div {
+  white-space: pre-wrap;
+}
+
+a {
+  text-decoration: none;
+  color: #0000ee;
+  // color: #9c7450;
+  cursor: pointer;
+}
+
 input {
   padding: 5px;
   margin-top: 5px;
@@ -51,4 +62,39 @@ li {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.error {
+  position: fixed;
+  top: 90px;
+  right: 40px;
+  z-index: 2000;
+  background-color: black;
+  height: 70px;
+  width: 400px;
+  padding: 15px;
+
+  border-radius: 15px;
+  border: 1px solid #f92f2f;
+  background-color: #fec8c8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #f92f2f;
+
+  span {
+    color: #fd8c8c;
+    cursor: pointer;
+  }
+
+  &-content {
+    display: flex;
+    align-items: center;
+
+    span {
+      margin-right: 10px;
+      color: #f92f2f;
+      cursor: default;
+    }
+  }
 }

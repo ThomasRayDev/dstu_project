@@ -1,13 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, BackgroundTasks
 from fastapi.responses import FileResponse
-from sqlalchemy.orm import Session
+from sqlalchemy import asc, desc
+from sqlalchemy.orm import Session, joinedload
 from database import SessionLocal, get_db
 from models import Project, Task, Comment
-from schemas import ProjectSchema, TaskSchema, CommentSchema
+from schemas import ProjectSchema, TaskSchema, CommentSchema, CommentOut, TaskOut
 from dependencies import get_current_user
 import os
 import uuid
 from datetime import datetime
+from typing import List
 
 
 router = APIRouter()
@@ -163,9 +165,11 @@ def get_tasks(
     db_project = db.query(Project).filter(Project.id == project_id).first()
     if not db_project:
         raise HTTPException(status_code=404, detail='Project not found')
-    return { 'tasks': db_project.tasks }
+    
+    sorted_tasks = db.query(Task).filter(Task.project_id == project_id).order_by(desc(Task.created_on)).all()
+    return { 'tasks': sorted_tasks }
 
-@router.get('/{project_id}/tasks/{task_id}')
+@router.get('/{project_id}/tasks/{task_id}', response_model=TaskOut)
 def get_one_task(
     project_id: int,
     task_id: int,
@@ -176,11 +180,11 @@ def get_one_task(
     if not db_project:
         raise HTTPException(status_code=404, detail='Project not found')
     
-    db_task = db.query(Task).filter(Task.id == task_id).first()
+    db_task = db.query(Task).options(joinedload(Task.comments).joinedload(Comment.user)).filter(Task.id == task_id).first()
     if not db_task or not db_task in db_project.tasks:
         raise HTTPException(status_code=404, detail='Task not found')
     
-    return { 'task': db_task }
+    return db_task
 
 @router.put('/{project_id}/tasks/{task_id}')
 def update_task(
@@ -200,7 +204,8 @@ def update_task(
     
     db_task.title = task.title
     db_task.description = task.description
-    db_task.created_on = task.created_on
+    if task.created_on: 
+        db_task.created_on = task.created_on
     db_task.deadline = task.deadline
 
     db.commit()
@@ -250,7 +255,7 @@ def create_comment(
 
     return { 'comment': db_comment }
 
-@router.get('/{project_id}/tasks/{task_id}/comments')
+@router.get('/{project_id}/tasks/{task_id}/comments', response_model=List[CommentOut])
 def get_comments(
     project_id: int,
     task_id: int,
@@ -261,7 +266,7 @@ def get_comments(
     if not db_task:
         raise HTTPException(status_code=404, detail='Task not found')
     
-    return { 'comments': db_task.comments }
+    return db.query(Comment).filter(Comment.task_id == task_id).all()
 
 @router.get('/{project_id}/tasks/{task_id}/comments/{comment_id}')
 def get_one_comment(

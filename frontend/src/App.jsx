@@ -1,8 +1,6 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-import { store } from './redux/store';
-import { Provider } from 'react-redux';
 
 import Login from './pages/Login';
 import Home from './pages/Home';
@@ -10,10 +8,25 @@ import Project from './pages/Project';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import EditProject from './pages/EditProject';
+import { clearError } from './redux/slices/errorSlice';
 
 function App() {
+  const error = useSelector((state) => state.error);
+  const dispatch = useDispatch();
+
   return (
-    <Provider store={store}>
+    <>
+      {error && (
+        <div className="error">
+          <div className="error-content">
+            <span class="material-symbols-outlined">error</span>
+            Ошибка: {error}
+          </div>
+          <span className="material-symbols-outlined" onClick={() => dispatch(clearError())}>
+            close
+          </span>
+        </div>
+      )}
       <BrowserRouter>
         <Routes>
           <Route
@@ -36,7 +49,7 @@ function App() {
           <Route path="/edit/:project_id" element={<EditProject />} />
         </Routes>
       </BrowserRouter>
-    </Provider>
+    </>
   );
 }
 

@@ -51,3 +51,4 @@ class Comment(Base):
     task_id = Column(Integer, ForeignKey(Task.id))
 
     task = relationship('Task', back_populates='comments')
+    user = relationship('User')
